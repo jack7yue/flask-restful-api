@@ -8,7 +8,7 @@ db = client.Players
 
 def get_player(id):
     cursor = db.Players.find_one({'id': id})
-    player = {'id': cursor[''], 'name': cursor['name'], 'position': cursor['position']}
+    player = {'id': cursor['id'], 'name': cursor['name'], 'position': cursor['position']}
     return player
 
 
@@ -28,8 +28,8 @@ def update_player(id, stats):
 
 def insert_player(stats):
     player = {'id': stats['id'], 'name': stats['name'], 'position': stats['position']}
-    db.insert(player)
+    db.Players.insert_one(player)
 
 
 def delete_player(id):
-    db.delete({'id': id})
+    db.Players.delete({'id': id})

@@ -5,9 +5,9 @@ from models import doa
 
 
 reqparse = reqparse.RequestParser()
-reqparse.add_argument('id', type=int, location='json')
-reqparse.add_argument('name', type=str, location='json')
-reqparse.add_argument('is_active', type=bool, location='json')
+reqparse.add_argument('id', type=int, location='json', required=True)
+reqparse.add_argument('name', type=str, location='json', required=True)
+reqparse.add_argument('position', type=str, location='json', required=True)
 
 
 class PlayerAPI(Resource):
@@ -19,11 +19,10 @@ class PlayerAPI(Resource):
 
         return player
 
-
     def put(self, id):
         args = reqparse.parse_args()
-        db.Players.update({'id': id}, {'$set': args})
-
+        doa.update_player(id, args)
+        return args
 
     def delete(self, id):
         doa.delete_player(id)
@@ -38,6 +37,7 @@ class PlayersAPI(Resource):
     def post(self):
         args = reqparse.parse_args()
         doa.insert_player(args)
+        return args
 
 
 
