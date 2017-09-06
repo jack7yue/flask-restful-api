@@ -8,7 +8,12 @@ db = client.Players
 
 def get_player(id):
     cursor = db.Players.find_one({'id': id})
+
+    if not cursor:
+        return False
+
     player = {'id': cursor['id'], 'name': cursor['name'], 'position': cursor['position']}
+
     return player
 
 
@@ -17,7 +22,7 @@ def get_players():
     cursor = db.Players.find()
 
     for player in cursor:
-        data.append(player)
+        data.append({'id': player['id'], 'name': player['name'], 'position': player['position']})
 
     return jsonify(data)
 

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_restful import Api
-from models.Player import PlayerAPI, PlayersAPI
+from models.REST_resource import PlayerAPI, PlayersAPI
 
 app = Flask(__name__)
 api = Api(app)
