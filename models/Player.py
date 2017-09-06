@@ -14,14 +14,8 @@ class PlayerData:
             self.position = data['position']
             self.team = data['team']
 
-    def json(self):
-        return
-        {
-            '_id': self.id,
-            'name': self.name,
-            'position': self.position,
-            'team': self.team,
-        }
+    def fields(self):
+        return self.__dict__
 
     @classmethod
     def find_by_id(cls, player_id):
@@ -41,6 +35,11 @@ class PlayerData:
     def update_player(cls, player_args, player_id=None):
         dao = PlayerDAO()
         return dao.update_player(player_id if player_id else player_args['_id'], player_args)
+
+    @classmethod
+    def insert_player(cls, player_args):
+        dao = PlayerDAO()
+        return dao.insert_player(player_args)
 
     @classmethod
     def delete_player(cls, player_id):

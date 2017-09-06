@@ -1,4 +1,4 @@
-from flask import abort
+from flask import abort, jsonify
 from flask_restful import Resource, reqparse
 from models import dao
 from models.Player import PlayerData
@@ -20,7 +20,7 @@ class PlayerAPI(Resource):
         if not player:
             abort(404, "No player with id %d exists" % id)
 
-        return player.json()
+        return jsonify(player.fields())
 
     def put(self, player_id):
         args = self.reqparse.parse_args()
@@ -46,9 +46,10 @@ class PlayersAPI(Resource):
 
     def get(self):
         players = PlayerData.find_all_players()
-        return [player_data.json() for player_data in players]
+        return_data = [player_data.fields() for player_data in players]
+        return jsonify(return_data)
 
     def post(self):
         args = self.reqparse.parse_args()
-        PlayerData.update_player(args)
+        PlayerData.insert_player(args)
         return 201
