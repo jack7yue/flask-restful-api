@@ -1,9 +1,10 @@
 from pymongo import MongoClient
 
 
+
 class PlayerDAO:
     def __init__(self):
-        self.client = MongoClient('mongodb://127.0.0.1:27017/')
+        self.client = MongoClient('mongod')
         self.Players = self.client.Players.Players
 
     def get_player_data_by_id(self, player_id):

@@ -1,3 +1,3 @@
-flask
-flask-restful
-pymongo
+flask==0.12.2
+flask-restful==0.3.6
+pymongo==3.5.1

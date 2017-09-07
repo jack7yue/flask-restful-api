@@ -1,11 +1,27 @@
-web:
-  build: .
-  command: python3 app.py
-  ports:
-    - "5000:5000"
-  volumes:
-    - .:/todo
-  links:
-    - db
-db:
-  image: mongo:3.4
+version: "3"
+
+# data volume for mongo
+volumes:
+        mongo_storage:
+        
+services:
+        app:
+                build: .
+
+                ports:
+                        - "5000:5000"
+                links: 
+                        - mongod
+                depends_on:
+                        - mongod
+
+        mongod:
+                image: 'mongo:3.4.1'
+
+                container_name: 'mongodb'
+                
+                volumes:
+                        - mongo_storage:/var/lib/mongodb
+
+                ports: 
+                        - '27017:27017'
