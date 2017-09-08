@@ -1,6 +1,5 @@
 from flask import abort, jsonify
 from flask_restful import Resource, reqparse
-from models import dao
 from models.Player import PlayerData
 
 
@@ -24,11 +23,11 @@ class PlayerAPI(Resource):
 
     def put(self, player_id):
         args = self.reqparse.parse_args()
-        self.data.update(player_id, args)
+        self.data.update_player(player_id, args)
         return 200
 
     def delete(self, player_id):
-        result = dao.delete_player(player_id)
+        result = self.data.delete_player(player_id)
 
         if not result:
             abort(404, "No player with id %d exists" % id)

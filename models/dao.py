@@ -24,8 +24,9 @@ class PlayerDAO:
                          'team': player['team']})
         return data
 
-    def update_player(self, id, args):
-        self.Players.update({'_id': id}, {'$set': args})
+    def update_player(self, args, id):
+        result = self.Players.update({'_id': id}, {'$set': args})
+        return result
 
     def insert_player(self, stats):
         player = {'name': stats['name'], 'position': stats['position'], 'team': stats['team']}
@@ -34,5 +35,7 @@ class PlayerDAO:
         self.Players.insert_one(player)
 
     def delete_player(self, id):
-        result = self.Players.delete({'_id': id})
-        return set("writeConcernError", "writeError") <= set(result)
+        result = self.Players.delete_many({'_id': id})
+
+        # check to see if our write operation succeeds
+        return result.acknowledged

@@ -3,10 +3,10 @@ from models.dao import PlayerDAO
 
 class PlayerData:
     def __init__(self, data=None):
-        self._id = data['_id'] if '_id' in data else ""
-        self.name = data['name'] if 'name' in data else ""
-        self.team = data['team'] if 'team' in data else ""
-        self.position = data['position'] if 'position' in data else ""
+        self._id = data['_id'] if data and '_id' in data else ""
+        self.name = data['name'] if data and 'name' in data else ""
+        self.team = data['team'] if data and 'team' in data else ""
+        self.position = data['position'] if data and 'position' in data else ""
 
     def fields(self):
         return self.__dict__
