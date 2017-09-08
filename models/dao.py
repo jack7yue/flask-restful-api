@@ -34,4 +34,5 @@ class PlayerDAO:
         self.Players.insert_one(player)
 
     def delete_player(self, id):
-        self.Players.delete({'_id': id})
+        result = self.Players.delete({'_id': id})
+        return set("writeConcernError", "writeError") <= set(result)
