@@ -23,7 +23,7 @@ class PlayerDAO:
         cursor = self.Players.find_one({'_id': player_id})
 
         if not cursor:
-            return False
+            return None
 
         player = PlayerDAO.data_to_collection(cursor)
         return player
@@ -38,12 +38,13 @@ class PlayerDAO:
         return data
 
     def update_player(self, args, id):
-        result = self.Players.update({'_id': id}, {'$set': args})
-        return result
+        result = self.Players.update_one({'_id': id}, {'$set': args})
+        return result.acknowledged
 
     def insert_player(self, stats):
         player = PlayerDAO.data_to_collection(stats)
-        self.Players.insert_one(player)
+        result = self.Players.insert_one(player)
+        return result.acknowledged
 
     def delete_player(self, id):
         result = self.Players.delete_many({'_id': id})

@@ -17,20 +17,24 @@ class PlayerAPI(Resource):
         player = self.data.find_by_id(player_id)
 
         if not player:
-            abort(404, "No player with id %d exists" % id)
+            abort(404)
 
         return jsonify(player.fields())
 
     def put(self, player_id):
         args = self.reqparse.parse_args()
-        self.data.update_player(player_id, args)
+        result = self.data.update_player(player_id, args)
+
+        if not result:
+            abort(404)
+
         return 200
 
     def delete(self, player_id):
         result = self.data.delete_player(player_id)
 
         if not result:
-            abort(404, "No player with id %d exists" % id)
+            abort(404)
 
         return 200
 
@@ -51,4 +55,10 @@ class PlayersAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         PlayerData.insert_player(args)
-        return 201
+        return 201, "New player with id: $s was inserted" % args['_id']
+
+    def put(self):
+        return 405
+
+    def delete(self):
+        return 405
