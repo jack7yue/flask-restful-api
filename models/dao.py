@@ -1,11 +1,23 @@
 from pymongo import MongoClient
-
-
+from collections import defaultdict
 
 class PlayerDAO:
     def __init__(self):
         self.client = MongoClient('mongod')
         self.Players = self.client.Players.Players
+
+    # Collection of db fields
+    KEYS = ['_id', 'name', 'position', 'team']
+
+    # Converts PyMongo cursor to dict
+    @classmethod
+    def data_to_collection(cls, data_dict):
+        player = defaultdict(str)
+
+        for key in cls.KEYS:
+            player[key] = data_dict[key]
+
+        return player
 
     def get_player_data_by_id(self, player_id):
         cursor = self.Players.find_one({'_id': player_id})
@@ -13,15 +25,16 @@ class PlayerDAO:
         if not cursor:
             return False
 
-        player = {'_id': cursor['_id'], 'name': cursor['name'], 'position': cursor['position'], 'team': cursor['team']}
+        player = PlayerDAO.data_to_collection(cursor)
         return player
 
     def get_players(self):
         data = []
-        cursor = self.Players.find()
-        for player in cursor:
-            data.append({'_id': player['_id'], 'name': player['name'], 'position': player['position'],
-                         'team': player['team']})
+        cursors = self.Players.find()
+
+        for cursor in cursors:
+            data.append(PlayerDAO.data_to_collection(cursor))
+
         return data
 
     def update_player(self, args, id):
@@ -29,9 +42,7 @@ class PlayerDAO:
         return result
 
     def insert_player(self, stats):
-        player = {'name': stats['name'], 'position': stats['position'], 'team': stats['team']}
-        if '_id' in stats:
-            player['_id'] = stats['_id']
+        player = PlayerDAO.data_to_collection(stats)
         self.Players.insert_one(player)
 
     def delete_player(self, id):
