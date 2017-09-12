@@ -19,28 +19,30 @@ class PlayerData:
         self.position = data['position'] if data and 'position' in data else ""
 
     @classmethod
-    def find_by_id(self, player_id):
+    def find_by_id(cls, player_id):
         dao = PlayerDAO()
         data = dao.get_player_data_by_id(player_id)
         player_data = PlayerData(data)
         return player_data
 
     @classmethod
-    def find_all_players(self):
+    def find_all_players(cls):
         dao = PlayerDAO()
         data = dao.get_players()
         player_data = [PlayerData(player_dict) for player_dict in data]
         return player_data
 
+    @classmethod
     def update_player(cls, player_args, player_id=None):
         dao = PlayerDAO()
         new_player = dao.update_player(player_id if player_id else player_args['_id'], player_args)
-        cls.fill_fields()
+        return PlayerData(new_player)
 
     @classmethod
     def insert_player(cls, player_args):
         dao = PlayerDAO()
-        return dao.insert_player(player_args)
+        new_player = dao.insert_player(player_args)
+        return PlayerData(new_player)
 
     @classmethod
     def delete_player(cls, player_id):

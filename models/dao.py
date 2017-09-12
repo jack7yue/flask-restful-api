@@ -7,16 +7,18 @@ class PlayerDAO:
         self.client = MongoClient('mongod')
         self.Players = self.client.Players.Players
 
+   PRIMARY_KEY = '_id'
+
     # Collection of db fields
-    KEYS = ['_id', 'name', 'position', 'team']
+    KEYS = ['name', 'position', 'team']
 
     # Converts PyMongo cursor to dict
     @classmethod
     def data_to_collection(cls, data_dict):
-        player = defaultdict(str)
+        player = dict([data_dict[key] for key in PlayerDAO.KEYS])
 
-        for key in cls.KEYS:
-            player[key] = data_dict[key]
+        if PRIMARY_KEY in data_dict:
+            player[PRIMARY_KEY] = data_dict[PRIMARY_KEY]
 
         return player
 

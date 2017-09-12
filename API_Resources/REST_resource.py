@@ -1,37 +1,36 @@
-from flask import abort, jsonify
-from flask_restful import Resource, reqparse
+from flask import abort
+from flask_restful import Resource, request
 from models.Player import PlayerData
+from validation import Validator
+from voluptuous.error import MultipleInvalid
 
 
 class PlayerAPI(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('_id', type=int, location='json', required=False)
-        self.reqparse.add_argument('team', type=str, location='json', required=True)
-        self.reqparse.add_argument('name', type=str, location='json', required=True)
-        self.reqparse.add_argument('position', type=str, location='json', required=True)
-
-        self.data = PlayerData()
-
     def get(self, player_id):
         player = self.data.find_by_id(player_id)
 
         if not player:
             abort(404)
 
-        return jsonify(player.fields())
+        return player.fields()
 
     def put(self, player_id):
-        args = self.reqparse.parse_args()
-        result = self.data.update_player(player_id, args)
+        payload = request.get_json()
+
+        try:
+            Validator.validate(payload)
+        except MultipleInvalid as e:
+            return 404, str(e)
+
+        result = PlayerData.update_player(player_id, payload)
 
         if not result:
             abort(404)
 
-        return 200
+        return result.fields()
 
     def delete(self, player_id):
-        result = self.data.delete_player(player_id)
+        result = PlayerData.delete_player(player_id)
 
         if not result:
             abort(404)
@@ -40,22 +39,21 @@ class PlayerAPI(Resource):
 
 
 class PlayersAPI(Resource):
-    def __init__(self):
-        self.reqparse = reqparse.RequestParser()
-        self.reqparse.add_argument('_id', type=int, location='json', required=False)
-        self.reqparse.add_argument('team', type=str, location='json', required=True)
-        self.reqparse.add_argument('name', type=str, location='json', required=True)
-        self.reqparse.add_argument('position', type=str, location='json', required=True)
-
     def get(self):
         players = PlayerData.find_all_players()
         return_data = [player_data.fields() for player_data in players]
-        return jsonify(return_data)
+        return return_data
 
     def post(self):
-        args = self.reqparse.parse_args()
-        PlayerData.insert_player(args)
-        return 201, "New player with id: $d was inserted" % args['_id']
+        payload = request.get_json()
+
+        try:
+            Validator.validate_post(payload)
+        except MultipleInvalid as e:
+            return 404, str(e)
+
+        new_player = PlayerData.insert_player(payload)
+        return 201, new_player
 
     def put(self):
         return 405
