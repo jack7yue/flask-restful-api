@@ -1,6 +1,7 @@
 from pymongo import MongoClient
 from collections import defaultdict
 
+
 class PlayerDAO:
     def __init__(self):
         self.client = MongoClient('mongod')
@@ -18,6 +19,7 @@ class PlayerDAO:
             player[key] = data_dict[key]
 
         return player
+
 
     def get_player_data_by_id(self, player_id):
         cursor = self.Players.find_one({'_id': player_id})
@@ -39,12 +41,22 @@ class PlayerDAO:
 
     def update_player(self, args, id):
         result = self.Players.update_one({'_id': id}, {'$set': args})
-        return result.acknowledged
+        new_player = None
+
+        if result.acknowledged:
+            new_player = args
+
+        return new_player
 
     def insert_player(self, stats):
         player = PlayerDAO.data_to_collection(stats)
         result = self.Players.insert_one(player)
-        return result.acknowledged
+        new_player = None
+
+        if result.acknowledged:
+            new_player = stats
+
+        return new_player
 
     def delete_player(self, id):
         result = self.Players.delete_many({'_id': id})

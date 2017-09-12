@@ -55,7 +55,7 @@ class PlayersAPI(Resource):
     def post(self):
         args = self.reqparse.parse_args()
         PlayerData.insert_player(args)
-        return 201, "New player with id: $s was inserted" % args['_id']
+        return 201, "New player with id: $d was inserted" % args['_id']
 
     def put(self):
         return 405
