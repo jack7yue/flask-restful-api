@@ -22,27 +22,37 @@ class PlayerData:
     def find_by_id(cls, player_id):
         dao = PlayerDAO()
         data = dao.get_player_data_by_id(player_id)
-        player_data = PlayerData(data)
-        return player_data
+        return PlayerData(data) if data else data
 
     @classmethod
     def find_all_players(cls):
         dao = PlayerDAO()
-        data = dao.get_players()
-        player_data = [PlayerData(player_dict) for player_dict in data]
-        return player_data
+        players = dao.get_players()
+
+        if players:
+            players = PlayerData(players)
+
+        return players
 
     @classmethod
     def update_player(cls, player_args, player_id=None):
         dao = PlayerDAO()
         new_player = dao.update_player(player_id if player_id else player_args['_id'], player_args)
-        return PlayerData(new_player)
+
+        if new_player:
+            new_player = PlayerData(new_player)
+
+        return new_player
 
     @classmethod
     def insert_player(cls, player_args):
         dao = PlayerDAO()
         new_player = dao.insert_player(player_args)
-        return PlayerData(new_player)
+
+        if new_player:
+            new_player = PlayerData(new_player)
+
+        return new_player
 
     @classmethod
     def delete_player(cls, player_id):

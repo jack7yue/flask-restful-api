@@ -7,7 +7,7 @@ from voluptuous.error import MultipleInvalid
 
 class PlayerAPI(Resource):
     def get(self, player_id):
-        player = self.data.find_by_id(player_id)
+        player = PlayerData.find_by_id(player_id)
 
         if not player:
             abort(404)
@@ -42,6 +42,9 @@ class PlayersAPI(Resource):
     def get(self):
         players = PlayerData.find_all_players()
         return_data = [player_data.fields() for player_data in players]
+
+        if not return_data:
+            abort(404)
         return return_data
 
     def post(self):
@@ -53,7 +56,7 @@ class PlayersAPI(Resource):
             return 404, str(e)
 
         new_player = PlayerData.insert_player(payload)
-        return 201, new_player
+        return 201, new_player.fields()
 
     def put(self):
         return 405
