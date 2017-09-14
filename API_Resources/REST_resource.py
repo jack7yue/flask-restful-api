@@ -41,11 +41,10 @@ class PlayerAPI(Resource):
 class PlayersAPI(Resource):
     def get(self):
         players = PlayerData.find_all_players()
-        return_data = [player_data.fields() for player_data in players]
 
-        if not return_data:
+        if not players:
             abort(404)
-        return return_data
+        return players
 
     def post(self):
         payload = request.get_json()

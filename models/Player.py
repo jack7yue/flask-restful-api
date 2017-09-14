@@ -35,9 +35,9 @@ class PlayerData:
         return players
 
     @classmethod
-    def update_player(cls, player_args, player_id=None):
+    def update_player(cls, player_args):
         dao = PlayerDAO()
-        new_player = dao.update_player(player_id if player_id else player_args['_id'], player_args)
+        new_player = dao.update_player(player_args)
 
         if new_player:
             new_player = PlayerData(new_player)

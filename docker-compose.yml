@@ -14,7 +14,8 @@ services:
                         - mongod
                 depends_on:
                         - mongod
-
+                environment:
+                  - MONGO_SERVICE_NAME='mongod'
         mongod:
                 image: 'mongo:3.4.1'
 
