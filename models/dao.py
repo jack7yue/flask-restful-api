@@ -1,5 +1,4 @@
-from pymongo import MongoClient
-from pymongo import ReturnDocument
+from pymongo import MongoClient, ReturnDocument, errors
 import settings
 
 
@@ -34,18 +33,20 @@ class PlayerDAO:
 
         return data
 
-    def update_player(self, args):
+    def update_player(self, player_id, args):
         """Returns a dictionary representation of a player or None"""
-        result = self.Players.update_one(
-            {settings.MONGO_PRIMARY_KEY: args[settings.MONGO_PRIMARY_KEY]},
-            {settings.MONGO_SET: args}
-        )
-        new_player = None
+        try:
+            self.Players.update_one(
+                {settings.MONGO_PRIMARY_KEY: player_id},
+                {settings.MONGO_SET: args}
+            )
+        except errors.PyMongoError:
+            return None
 
-        if result.acknowledged:
-            new_player = args
+        player = args
+        player[settings.MONGO_PRIMARY_KEY] = player_id
 
-        return new_player
+        return args
 
     def insert_player(self, stats):
         """Returns a dictionary representation of a player or None"""

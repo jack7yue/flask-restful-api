@@ -18,7 +18,7 @@ class PlayerAPI(Resource):
         payload = request.get_json()
 
         try:
-            Validator.validate(payload)
+            Validator.validate_post(payload)
         except MultipleInvalid as e:
             return 404, str(e)
 
@@ -41,10 +41,7 @@ class PlayerAPI(Resource):
 class PlayersAPI(Resource):
     def get(self):
         players = PlayerData.find_all_players()
-
-        if not players:
-            abort(404)
-        return players
+        return [player.fields() for player in players]
 
     def post(self):
         payload = request.get_json()

@@ -30,14 +30,14 @@ class PlayerData:
         players = dao.get_players()
 
         if players:
-            players = PlayerData(players)
+            players = [PlayerData(player) for player in players]
 
         return players
 
     @classmethod
-    def update_player(cls, player_args):
+    def update_player(cls, player_id, player_args):
         dao = PlayerDAO()
-        new_player = dao.update_player(player_args)
+        new_player = dao.update_player(player_id, player_args)
 
         if new_player:
             new_player = PlayerData(new_player)
